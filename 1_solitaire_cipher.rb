@@ -22,7 +22,11 @@ def solitaire_keystream(length)
         deck += deck.slice!(0..top_J) unless top_J < 0
         deck.insert(0,*bottom_slice)
         deck.insert(-2,*deck.slice!(0..(deck[-1]-1)))
-        keystream.push(deck[0].is_a?(Fixnum) ? deck[deck[0]] : deck[53])
+        if deck[0].is_a?(Fixnum)
+            keystream << deck[deck[0]] unless deck[deck[0]].is_a?(String)
+        else
+            keystream << deck[53] unless deck[53].is_a?(String)
+        end
     end
     keystream
 end
