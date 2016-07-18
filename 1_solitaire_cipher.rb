@@ -10,7 +10,20 @@
 # 6. Convert the numbers from step 5 back to letters:
 # 
 
-
+class Encryptor
+    
+    def initialize(deck)
+        @deck = deck
+    end
+    
+    def clean_message(str)
+        encrypted_str = str.upcase.scan(/[A-Z]/)
+        if encrypted_str.length % 2 != 0
+            (5 - encrypted_str.length % 2).times {encrypted_str << "X"}
+        end
+        encrypted_str.insert(4, " ")
+    end
+end
 
 # GENERATE KEYSTREAM
 # 1. Key the decks by shuffling or using some secret indicator. (This script, however, will be using UNKEYED decks.)
