@@ -47,13 +47,17 @@ class Deck
         @deck.insert(-2,*@deck.slice!(0..(@deck[-1]-1)))
     end
     
+    def mod(num)
+       num > 26 ? num -= 26 : num
+    end
+    
     def get_key
         move_down("A")
         2.times {move_down("B")}
         triple_cut
         count_cut
         pos = (@deck[0].is_a?(Fixnum) ? @deck[0] : 53)
-        @deck[pos].is_a?(Fixnum) ? (@deck[pos] + 26) % 26 : get_key
+        @deck[pos].is_a?(Fixnum) ? mod(@deck[pos]) : get_key
     end
     
 end
