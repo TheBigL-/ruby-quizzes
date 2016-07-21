@@ -53,7 +53,7 @@ class Deck
         triple_cut
         count_cut
         pos = (@deck[0].is_a?(Fixnum) ? @deck[0] : 53)
-        @deck[pos].is_a?(Fixnum) ? @deck[pos] : get_key
+        @deck[pos].is_a?(Fixnum) ? (@deck[pos] + 26) % 26 : get_key
     end
     
 end
