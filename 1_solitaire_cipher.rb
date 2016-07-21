@@ -12,17 +12,23 @@
 
 class Encryptor
     
-    def initialize(deck)
-        @deck = deck
+    def initialize(keygen)
+        @keygen = keygen
     end
     
-    def clean_message(str)
-        encrypted_str = str.upcase.scan(/[A-Z]/)
-        if encrypted_str.length % 2 != 0
-            (5 - encrypted_str.length % 2).times {encrypted_str << "X"}
-        end
-        encrypted_str.insert(4, " ")
+    def scrunch(msg)
+        msg.upcase!.gsub!(/[^A-Z]/,"")
+        (5 - msg.length % 2).times {msg += "X"} if msg.length % 2 != 0
     end
+    
+    def encrypt(msg)
+        
+    end
+    
+    def decrypt(msg)
+        
+    end
+    
 end
 
 # GENERATE KEYSTREAM
