@@ -17,16 +17,29 @@ class Encryptor
     end
     
     def scrunch(msg)
-        msg.upcase!.gsub!(/[^A-Z]/,"")
-        (5 - msg.length % 2).times {msg += "X"} if msg.length % 2 != 0
+        msg.upcase!
+        msg.gsub!(/[^A-Z]/,"")
+        msg << "X" * ((5 - msg.length % 5) % 5)
+    end
+    
+    def mod(num)
+        num -= 26 if num > 26
+        num += 26 if num < 1
+        num
     end
     
     def encrypt(msg)
-        
+        scrunched = scrunch(msg).chars.map {|char| (mod(char.ord - 64 + @keygen.get_key)+64).chr}.join
+        crypt = ""
+        (scrunched.length / 5).times {|i| crypt << scrunched[i*5,5] << " "}
+        crypt.chop
     end
     
     def decrypt(msg)
-        
+        scrunched = scrunch(msg).chars.map {|char| (mod(char.ord - 64 - @keygen.get_key)+64).chr}.join
+        crypt = ""
+        (scrunched.length / 5).times {|i| crypt << scrunched[i*5,5] << " "}
+        crypt.chop
     end
     
 end
