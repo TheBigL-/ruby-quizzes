@@ -28,22 +28,22 @@ class Encryptor
         num
     end
     
-    def encrypt(msg)
-        scrunched = scrunch(msg).chars.map {|char| (mod(char.ord - 64 + @keygen.get_key)+64).chr}.join
+    def process(msg, &cryptor)
+        scrunched = scrunch(msg).chars.map {|char| (mod(cryptor.call(char)) + 64).chr}.join
         crypt = ""
         (scrunched.length / 5).times {|i| crypt << scrunched[i*5,5] << " "}
         crypt.chop
+    end
+    
+    def encrypt(msg)
+        process(msg) {|char| char.ord - 64 + @keygen.get_key}
     end
     
     def decrypt(msg)
-        scrunched = scrunch(msg).chars.map {|char| (mod(char.ord - 64 - @keygen.get_key)+64).chr}.join
-        crypt = ""
-        (scrunched.length / 5).times {|i| crypt << scrunched[i*5,5] << " "}
-        crypt.chop
+        process(msg) {|char| char.ord - 64 - @keygen.get_key}
     end
     
 end
-
 
 # GENERATE KEYSTREAM
 # 1. Key the decks by shuffling or using some secret indicator. (This script, however, will be using UNKEYED decks.)
@@ -67,7 +67,7 @@ class Deck
         @deck.insert(new_pos ,@deck.delete_at(old_pos))
     end
     
-    def triple_cut # maybe use array#replace here?
+    def triple_cut
         top_J, bottom_J = [@deck.index("A"),@deck.index("B")].sort
         @deck.replace([@deck[(bottom_J+1)..-1],@deck[top_J..bottom_J],@deck[0...top_J]].flatten)
     end
