@@ -44,6 +44,7 @@ class Encryptor
     
 end
 
+
 # GENERATE KEYSTREAM
 # 1. Key the decks by shuffling or using some secret indicator. (This script, however, will be using UNKEYED decks.)
 # 2. Move Joker A one card down, then move Joker B two cards down. 
@@ -52,6 +53,7 @@ end
 # 5. Convert the top card to it's value and count down that many cards to find the first key
 # 6. Repeat 2 - 5 for the rest of the keys
 # 7. Output array of keys
+# 
 
 class Deck
 
@@ -59,20 +61,15 @@ class Deck
         @deck = (1..52).to_a << "A" << "B"
     end
     
-    # move the Jokers down (step 2)
-    def move_down(joker)
-        old_pos = @deck.index(joker) 
+    def move_down(card)
+        old_pos = @deck.index(card) 
         new_pos = old_pos > 52 ? old_pos - 52 : old_pos + 1
         @deck.insert(new_pos ,@deck.delete_at(old_pos))
     end
     
-    # perfrom triple cut (step 3)
     def triple_cut # maybe use array#replace here?
-        bottom_J = [@deck.index("A"),@deck.index("B")].max + 1
-        bottom_slice = bottom_J > 53 ? nil : @deck.slice!(bottom_J..-1)
-        top_J = [@deck.index("A"),@deck.index("B")].min - 1
-        @deck += @deck.slice!(0..top_J) unless top_J < 0
-        @deck.insert(0,*bottom_slice)
+        top_J, bottom_J = [@deck.index("A"),@deck.index("B")].sort
+        @deck.replace([@deck[(bottom_J+1)..-1],@deck[top_J..bottom_J],@deck[0...top_J]].flatten)
     end
     
     def count_cut
@@ -83,11 +80,15 @@ class Deck
        num > 26 ? num -= 26 : num
     end
     
-    def get_key
+    def compose
         move_down("A")
         2.times {move_down("B")}
         triple_cut
         count_cut
+    end
+    
+    def get_key
+        compose
         pos = (@deck[0].is_a?(Fixnum) ? @deck[0] : 53)
         @deck[pos].is_a?(Fixnum) ? mod(@deck[pos]) : get_key
     end
