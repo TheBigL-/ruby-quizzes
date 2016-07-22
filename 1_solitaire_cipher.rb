@@ -18,7 +18,7 @@ class Encryptor
     
     def scrunch(msg)
         msg.upcase!
-        msg.gsub!(/[^A-Z]/,"")
+        msg.gsub!(/[^A-Z]/, "")
         msg << "X" * ((5 - msg.length % 5) % 5)
     end
     
@@ -31,16 +31,16 @@ class Encryptor
     def process(msg, &cryptor)
         scrunched = scrunch(msg).chars.map {|char| (mod(cryptor.call(char)) + 64).chr}.join
         crypt = ""
-        (scrunched.length / 5).times {|i| crypt << scrunched[i*5,5] << " "}
+        (scrunched.length / 5).times {|i| crypt << scrunched[i * 5, 5] << " "}
         crypt.chop
     end
     
     def encrypt(msg)
-        process(msg) {|char| char.ord - 64 + @keygen.get_key}
+        process(msg) { |char| char.ord - 64 + @keygen.get_key }
     end
     
     def decrypt(msg)
-        process(msg) {|char| char.ord - 64 - @keygen.get_key}
+        process(msg) { |char| char.ord - 64 - @keygen.get_key }
     end
     
 end
@@ -64,16 +64,18 @@ class Deck
     def move_down(card)
         old_pos = @deck.index(card) 
         new_pos = old_pos > 52 ? old_pos - 52 : old_pos + 1
-        @deck.insert(new_pos ,@deck.delete_at(old_pos))
+        @deck.insert(new_pos, @deck.delete_at(old_pos))
     end
     
     def triple_cut
-        top_J, bottom_J = [@deck.index("A"),@deck.index("B")].sort
-        @deck.replace([@deck[(bottom_J+1)..-1],@deck[top_J..bottom_J],@deck[0...top_J]].flatten)
+        top_J, bottom_J = [@deck.index("A"), @deck.index("B")].sort
+        @deck.replace( [@deck[(bottom_J + 1)..-1],
+                        @deck[top_J..bottom_J],
+                        @deck[0...top_J]].flatten)
     end
     
     def count_cut
-        @deck.insert(-2,*@deck.slice!(0..(@deck[-1]-1)))
+        @deck.insert(-2, *@deck.slice!(0..(@deck[-1] - 1)))
     end
     
     def mod(num)
@@ -82,7 +84,7 @@ class Deck
     
     def compose
         move_down("A")
-        2.times {move_down("B")}
+        2.times { move_down("B") }
         triple_cut
         count_cut
     end
