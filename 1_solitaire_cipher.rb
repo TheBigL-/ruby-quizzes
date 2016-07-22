@@ -31,8 +31,7 @@ class Encryptor
     def process(msg, &cryptor)
         scrunched = scrunch(msg).chars.map {|char| (mod(cryptor.call(char)) + 64).chr}.join
         crypt = ""
-        (scrunched.length / 5).times {|i| crypt << scrunched[i * 5, 5] << " "}
-        crypt.chop
+        scrunched.scan(/.{5}/).join(" ")
     end
     
     def encrypt(msg)
